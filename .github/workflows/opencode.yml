@@ -123,7 +123,7 @@ jobs:
 
       - name: Run opencode
         if: ${{ steps.model.outputs.model != '' }}
-        uses: anomalyco/opencode/github@16747470f976aca3d362ad730bcd3fe82ecc2c9a # v1.18.29
+        uses: anomalyco/opencode/github@63f7ceecbed2d7d9a627518d935dd963b9d4ac9f # v2.0.0
         env:
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
           PUTER_AUTH_TOKEN: ${{ secrets.PUTER_AUTH_TOKEN }}
