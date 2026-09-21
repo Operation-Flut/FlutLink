@@ -18,7 +18,7 @@ composeMultiplatform = "1.12.0"
 composeMaterial3 = "1.12.0-alpha03"
 multiplatformLifecycle = "2.11.0"
 multiplatformNavigation = "2.9.2"
-ktor = "3.5.2"
+ktor = "3.6.0"
 junit = "4.13.2"
 
 [libraries]
