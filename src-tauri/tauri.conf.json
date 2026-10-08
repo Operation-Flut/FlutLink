@@ -72,6 +72,12 @@
             "description": "Headless listing of a cloud folder: flutlink --list <remote_path> (prints JSON to stdout)",
             "takesValue": true,
             "multiple": false
+          },
+          {
+            "name": "autostart",
+            "description": "Start minimized to the system tray (passed automatically by the OS autostart entry)",
+            "takesValue": false,
+            "multiple": false
           }
         ]
     },

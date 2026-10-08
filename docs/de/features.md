@@ -85,6 +85,8 @@ Details siehe [Sync-Engine](sync.md).
   Symbol stellt das Fenster ebenfalls wieder her.
 - Kommandozeilen-Flags decken Headless-artige Workflows ab:
   `--sync`, `--path <Ordner>`, `--tray`.
+- *Mit System starten* (Autostart) läuft beim OS-Login nur im Tray; ein
+  manueller Start öffnet immer das Hauptfenster.
 
 Siehe [Tray & CLI](tray-and-cli.md).
 

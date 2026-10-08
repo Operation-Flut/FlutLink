@@ -239,6 +239,7 @@ fn setup_tray(app: &tauri::App, quit_flag: Arc<AtomicBool>) -> tauri::Result<()>
 struct CliArgs {
     want_sync: bool,
     want_tray: bool,
+    want_autostart: bool,
     path: Option<String>,
     url: Option<String>,
     download: Option<String>,
@@ -248,7 +249,7 @@ struct CliArgs {
 
 /// Lightweight parser for the `argv` forwarded by
 /// `tauri_plugin_single_instance`. Recognises the same flags as the Tauri CLI
-/// definition (`sync`/`-s`, `tray`/`-t`, `path`/`-p`, `url`/`-u`,
+/// definition (`sync`/`-s`, `tray`/`-t`, `autostart`, `path`/`-p`, `url`/`-u`,
 /// `download`, `download-to`, `list`), accepting both `--flag=value` and
 /// `--flag value` forms. A leading non-flag token (the program path) is
 /// skipped so it works whether or not argv[0] is included.
@@ -279,6 +280,7 @@ fn parse_cli_argv(argv: &[String]) -> CliArgs {
         match flag.as_str() {
             "-s" | "--sync" => args.want_sync = true,
             "-t" | "--tray" => args.want_tray = true,
+            "--autostart" => args.want_autostart = true,
             "-p" | "--path" => args.path = get_val(&mut i, &inline),
             "-u" | "--url" => args.url = get_val(&mut i, &inline),
             "--download" => args.download = get_val(&mut i, &inline),
@@ -380,9 +382,11 @@ fn run_cli(handle: &AppHandle, args: CliArgs) {
         handle.state::<AppState>().sync.notify_one();
     }
 
-    // When autostart is active, suppress the window from opening at startup.
-    // The tray is already visible; the user opens the window via tray click.
-    if args.want_tray || crate::settings::load(handle).autostart_enabled {
+    // Only an explicit `-t/--tray` or an OS-autostart launch (`--autostart`,
+    // appended to the registered command by tauri-plugin-autostart) starts
+    // minimized to the tray. A manual start always opens the main window —
+    // even when autostart is enabled in the settings.
+    if args.want_tray || args.want_autostart {
         if let Some(window) = handle.get_webview_window("main") {
             let _ = window.hide();
         }
@@ -391,8 +395,9 @@ fn run_cli(handle: &AppHandle, args: CliArgs) {
 
 /// Handle CLI flags passed to the first-instance binary:
 /// `-s/--sync`, `-p/--path <dir>`, `-u/--url <url>`, `-t/--tray`,
-/// `--download <remote> --download-to <local>` and `--list <path>` (the latter
-/// two are headless: they print JSON to stdout and need not show a window).
+/// `--autostart`, `--download <remote> --download-to <local>` and
+/// `--list <path>` (the two headless ones print JSON to stdout and need not
+/// show a window).
 fn handle_cli(app: &tauri::AppHandle) {
     let Ok(matches) = app.cli().matches() else {
         return;
@@ -403,6 +408,7 @@ fn handle_cli(app: &tauri::AppHandle) {
         CliArgs {
             want_sync: args.get("sync").is_some_and(|a| a.occurrences > 0),
             want_tray: args.get("tray").is_some_and(|a| a.occurrences > 0),
+            want_autostart: args.get("autostart").is_some_and(|a| a.occurrences > 0),
             path: args
                 .get("path")
                 .and_then(|a| a.value.as_str())
@@ -438,8 +444,14 @@ pub fn run() {
             // the existing window — otherwise `--sync`-style scripting and
             // headless commands silently become no-ops when the app is already
             // running.
-            show_main_window(app);
-            run_cli(app, parse_cli_argv(&argv));
+            let args = parse_cli_argv(&argv);
+            // A second `--tray`/`--autostart` invocation (e.g. a boot while
+            // the app already runs) must not pop the window up just to hide
+            // it again below.
+            if !args.want_tray && !args.want_autostart {
+                show_main_window(app);
+            }
+            run_cli(app, args);
         }))
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
@@ -448,7 +460,10 @@ pub fn run() {
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_autostart::init(
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,
-            None,
+            // Pass a marker flag so the launched instance can tell an
+            // OS-login start (start minimized to tray) apart from a manual
+            // start (always open the main window).
+            Some(vec!["--autostart"]),
         ))
         .manage(AppState::new())
         .manage(disk_mount::DiskMountState::default())
@@ -483,12 +498,14 @@ pub fn run() {
                 let settings = crate::settings::load(&handle);
                 let autolaunch = handle.autolaunch();
                 let os_enabled = autolaunch.is_enabled().unwrap_or(false);
-                if settings.autostart_enabled != os_enabled {
-                    if settings.autostart_enabled {
-                        let _ = autolaunch.enable();
-                    } else {
-                        let _ = autolaunch.disable();
-                    }
+                if settings.autostart_enabled {
+                    // Re-enable on every start (idempotent) so the registered
+                    // command always carries the current `--autostart` flag —
+                    // entries written by older versions lack it and would
+                    // open the window at login instead of starting minimized.
+                    let _ = autolaunch.enable();
+                } else if os_enabled {
+                    let _ = autolaunch.disable();
                 }
             }
 

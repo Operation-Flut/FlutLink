@@ -29,6 +29,7 @@ Konfiguriert in `tauri.conf.json` unter `plugins.cli` und geparst in
 | `--path` | `-p` | Verzeichnis | Lokalen Ordner zum Zwei-Wege-Sync hinzufügen |
 | `--url` | `-u` | URL (ignoriert) | Login-Dialog für den FlutCloud-Server öffnen |
 | `--tray` | `-t` | keins | Minimiert in den System-Tray starten |
+| `--autostart` | — | keins | Minimiert in den System-Tray starten. Wird automatisch zum OS-Login-Eintrag der Einstellung *Mit System starten* hinzugefügt, sodass ein Systemstart nur im Tray läuft, während jeder manuelle Start das Fenster normal öffnet (siehe `tauri_plugin_autostart::init` in `lib.rs`) |
 
 Beispiele:
 

@@ -79,6 +79,8 @@ See [Sync engine](sync.md) for the details.
   restores the window.
 - Command-line flags cover headless-ish workflows:
   `--sync`, `--path <dir>`, `--tray`.
+- *Start with system* (autostart) launches tray-only at OS login; a manual
+  start always opens the main window.
 
 See [Tray & CLI](tray-and-cli.md).
 
