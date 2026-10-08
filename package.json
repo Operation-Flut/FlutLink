@@ -17,16 +17,16 @@
     "getos": "^3.2.1",
     "pinia": "^4.0.3",
     "qrcode": "^1.5.4",
-    "vue": "^3.5.42"
+    "vue": "^3.5.43"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
     "@tauri-apps/cli": "^2",
     "@types/qrcode": "^1.5.6",
-    "@vitejs/plugin-vue": "^6.0.7",
+    "@vitejs/plugin-vue": "^6.0.9",
     "tailwindcss": "^4.3.3",
     "typescript": "~5.8.3",
-    "vite": "^8.2.2",
+    "vite": "^8.3.2",
     "vue-tsc": "^3.3.11"
   }
 }
