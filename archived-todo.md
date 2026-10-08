@@ -498,11 +498,6 @@ asset-name-Härtung R7-2); Chunked-Upload-v2-Cleanup; Impersonation-Guards
       `PlatformActuals.kt`, `PlatformUi.ios.kt`) und in
       `kmp/README.md` („Stand der iOS-Parität") dokumentiert.
       Verschoben nach `archived-todo.md`.
-- [ ] „Desktop-JVM: Token-Speicher härten" → **weiter offen, bestätigt**:
-      `kmp/shared/src/jvmMain/kotlin/com/flutcloud/flutlink/desktop/FileKeyValueStorage.kt:12-15`
-      legt Tokens weiterhin als Properties-Datei mit 600-Rechten unter
-      `$XDG_STATE_HOME/flutlink` ab; Kommentar nennt die Keyring-Anbindung
-      ausdrücklich als Follow-up.
 
 ### GitHub-Issues (Schritt 6)
 
@@ -678,17 +673,6 @@ Neu offen aus diesem Lauf:
       (erstmals seit dem Fold-in)** und Android-APK ✓, Lint ✓; lokal
       vorab verifiziert waren 30/30 KMP-Tests, compileKotlinJvm,
       compileKotlinIosArm64 und processDebugResources.
-- [ ] Issues #293/#317/#318 nach dem Push mit Commit-Referenz schließen.
-- [ ] Desktop-JVM: Token-Speicher härten — OS-Keyring-Anbindung statt
-      600er-Datei unter `$XDG_STATE_HOME/flutlink` (siehe
-      `FileKeyValueStorage`), Parität zum Tauri-Client (`keyring`).
-- [ ] `SettingsStore` nach `commonMain` heben (DataStore Preferences ist
-      multiplatform; der `Context`-Delegate bleibt androidMain-actual) —
-      Voraussetzung für Einstellungen im späteren iOS-/Desktop-UI.
-- [ ] iOS-Parität (Langläufer): die Compose-UI aus `androidMain`
-      (R.string-i18n, EncryptedSharedPreferences, SAF-Aktionen) nach
-      `commonMain` heben bzw. den iOS-Placeholder ersetzen; dokumentiert
-      in `kmp/README.md` („Stand der iOS-Parität").
 
 
 ### Fix-Lauf 2026-08-23 — L15/L16-Katalog geschlossen (Commit `59de00d`) — v1.0.0 release-ready
@@ -2041,9 +2025,6 @@ verifiziert — die drei zugehörigen Review-Abschnitte sind komplett nach
 
 Weiter offen (unverändert, bestätigt):
 
-- [ ] „Desktop-JVM: Token-Speicher härten“ —
-  `FileKeyValueStorage.kt:8-15` dokumentiert die Keyring-Anbindung
-  weiterhin als Follow-up.
 - [ ] Performance-Analyse unten: R1 (sequenzielles BFS,
   `sync.rs:397-441`), R2 (Union-BTreeSet, `sync.rs:563-566`), R3
   (`evict_oldest` Vollscan, `cache.rs:57-82`), N1+F2 (`loadAllShares`

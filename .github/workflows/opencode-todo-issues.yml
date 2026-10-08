@@ -102,7 +102,6 @@ jobs:
                - UX/Design → `ux`
                - Doku → `documentation`
                - CI/Workflows/Build/Release → `ci`
-               - Mobile-Client-Befunde → `android`
                - Sync-Engine-Befunde → `sync`
                Fehlt ein Label, lege es zuerst an (`gh label create <name> --color …`
                bzw. POST /repos/{owner}/{repo}/labels). Schlägt das Label-Anlegen

@@ -110,10 +110,7 @@ Gegenstand: vollständiges Review des gesamten Projekts (Desktop Tauri v2 Client
 - [ ] **R30-F9 (Frontend/Store, mittel): `accounts.ts:33-54` `load()` nutzt `loadSeq` Guard gegen Race — gut. Aber `loadStorage()` (`accounts.ts:56-71`) prüft `active.value` **nach** dem Await, nicht atomar mit dem `owner`-Guard.** Bei schnellem Account-Switch kann `loadStorage` für alten Account laufen und `storage` mit fremder Quota überschreiben. Fix: `owner`-Check **vor** dem Await oder `loadStorage` sequentiell nach `load()` awaiten (aktuell paralleles `await loadStorage()` am Ende von `load()` ohne Seq-Guard).
 - [ ] **R30-F10 (Frontend, niedrig): `SettingsModal.vue:90-100` `filesApp` nutzt `navigator.userAgentData?.platform` (Client Hints) + Fallback auf `userAgent`.** Der Fallback `t("filesappUnknown")` ist i18n-konform (gut, R29-N2 fix). Aber `navigator.userAgentData` ist **Secure Context Only** (HTTPS/localhost) — auf `tauri://` oder `http://` im Dev-Modus `undefined`. Der Fallback auf `userAgent` greift, aber `userAgent` enthält `"MacIntel"` auf Windows (Edge/WebView2) → fälschlich „Finder". Fix: `window.navigator.platform` (deprecated, aber auf WebView2 zuverlässig) als zweiten Fallback vor `userAgent` nutzen.
 - [ ] **R30-F11 (CI/Release, mittel): `.github/workflows/release.yml:123-136` `release-notes`-Job: `continue-on-error: true` (R28-N1) + Push auf `main` (R29-F2 Fix: Ref-Guard `if [[ "$GITHUB_REF" != refs/tags/v* ]]` hinzugefügt).** Aber der **Read-Step** (`steps.read.outputs.body`) liest `release-notes.md` per Heredoc — wenn OpenCode **leeren Output** liefert (Model-Fallback, Rate-Limit), ist `release-notes.md` leer/fehlt, `cat` schlägt fehl, `body` Output bleibt unset. `prepare-release` fällt auf Platzhalter zurück. Fix: `release-notes.md` Existenz/Non-Empty prüfen vor Heredoc, sonst Fallback-Body explizit setzen.
-- [ ] **R30-F12 (CI/Release, niedrig): `.github/workflows/release.yml:547-559` `publish-release` Completeness-Gate prüft Patterns (`\.apk$`, `\.ipa$`, `classic\.json$`, `latest\.json$`, `\.sig$`, `flutcloud-app\.zip$`, Desktop-Suffixe).** Aber **Windows** baut **MSI + NSIS** (`build.yml:78`, `release.yml:275`) — Gate prüft nur `\.msi$` **oder** `.exe$` (NSIS heißt `*_x64-setup.exe`). Wenn Tauri nur MSI baut (Config-Änderung), fehlt `.exe` → Gate schlägt fehl. Fix: Gate auf `(\.msi|\.exe)$` erweitern oder Tauri-Config explizit beide erzwingen.
-- [ ] **R30-F13 (KMP/AccountStore, mittel): `kmp/shared/src/commonMain/kotlin/.../core/AccountStore.kt:34-38` `saveToken` schreibt in `securePrefs` (Android Keystore / JVM file-based). Aber **kein** Counterpart zu `delete_token` beim Account-Remove — `AccountStore` hat `deleteToken`, aber `SessionManager`/`AccountViewModel` rufen es beim Logout/Remove nicht auf.** Tokens bleiben im Keystore/Filesystem orphaned. Fix: `AccountStore.deleteToken` bei `SessionManager.clearSession` / Account-Remove aufrufen.
-- [ ] **R30-F14 (KMP/WebDAV, mittel): `kmp/shared/src/commonMain/kotlin/.../data/WebDavApi.kt` nutzt `khttp` (blocking) statt `ktor`/`okhttp` async — blockiert Coroutines auf IO-Dispatcher, aber alle Calls sind `withContext(Dispatchers.IO)`.** OK, aber `WebDavApi.list`/`search`/`putFile`/`getFile` haben **kein** Timeout-Config — hängt unbegrenzt bei Netzwerkproblemen. Desktop setzt `connect_timeout=30s`/`read_timeout=60s` (`state.rs:220-221`). Fix: `khttp` Request-Config mit Timeouts setzen.
-- [ ] **R30-F15 (KMP/OCS, mittel): `kmp/shared/src/commonMain/kotlin/.../data/FlutCloudOcs.kt` `updateUser` (`FlutCloudOcs.kt:76`) sendet `key`/`value` roh im Form-Body — gleiche Double-Encoding-Problematik wie Desktop `ocs.rs:529` (R30-F5).** Desktop sendet `path` roh, Rest form-encoded; KMP sendet alles form-encoded. Inkonsistent. Fix: Desktop/KMP angleichen (beide roh oder beide form-encoded mit Doku).
+- [ ] **R30-F12 (CI/Release, niedrig): `.github/workflows/release.yml:547-559` `publish-release` Completeness-Gate prüft Patterns (`latest\.json$`, `\.sig$`, `flutcloud-app\.zip$`, Desktop-Suffixe).** Aber **Windows** baut **MSI + NSIS** (`build.yml:78`, `release.yml:275`) — Gate prüft nur `\.msi$` **oder** `.exe$` (NSIS heißt `*_x64-setup.exe`). Wenn Tauri nur MSI baut (Config-Änderung), fehlt `.exe` → Gate schlägt fehl. Fix: Gate auf `(\.msi|\.exe)$` erweitern oder Tauri-Config explizit beide erzwingen.
 
 **Re-Verifikation offener Befunde (aus L24/L25/L26/L28/L29):**
 
@@ -124,8 +121,6 @@ Gegenstand: vollständiges Review des gesamten Projekts (Desktop Tauri v2 Client
 - [ ] **L24-F7** (Share-Edit `publicUpload` immer gesendet): **weiter offen** — `ShareDialog.vue:103-104` sendet `publicUpload` immer, `""` → `undefined`; Backend `commands.rs:618-623` mappt auf 15/1.
 - [ ] **L24-F8** (move_dest_path ohne Trailing-Slash-Trim / validate_dav_path leere Segmente): **teilweise** — `commands.rs:1426-1437` `move_dest_path` trimmed `dest_folder` (`trim_end_matches('/')`), aber `validate_dav_path` (`commands.rs:641-666`) prüft `//` → leere Segmente blockiert; Move-in-sich-selbst geprüft (`validate_copy_move_dest` `dest == source`).
 - [ ] **L24-N1** (Sync-Log Write-Amplification): **teilweise** — `flush_sync_log` 1×/Pass (gut), aber Batch-Limit fehlt (R30-F6).
-- [ ] **KMP-F1** (Admin `editUser` fehlt): **weiter offen** — `AdminViewModel.kt` kein `editUser`, `FlutCloudOcs.updateUser` nur für quota/enabled genutzt.
-- [ ] **KMP-F9** (Copy/Move/QR/QuickLook fehlen): **weiter offen**.
 
 ## Review 2026-08-30 (Lauf 29, Fokus „v1.3.2-Vorbereitung: Disk-Mount/VFS-WIP + offene L24-Befunde" — neue Befunde)
 
@@ -162,50 +157,6 @@ Verifikation (alles grün): `cargo fmt --check` ✓, `cargo clippy --all-targets
 „Über"), `SyncPanel.vue`-Rework mit `stateUnknown`-Fallback und Empty-State.
 Sämtliche Disk-Mount-i18n-Keys sind in en/de/fr/es angelegt. Bewertung →
 R29-F3 (nicht verdrahtet) und R29-N1/N2.
-
-## Review 2026-08-28 (Lauf 25, Fokus KMP Mobile UI — offene Befunde)
-
-Gegenstand: die komplette KMP-Mobile-UI (`kmp/shared/src/commonMain/kotlin/.../ui/`)
-gegen die Desktop-Features (`src/`, IPC-Commands, `commands.rs`, `ocs.rs`).
-Auftrag: UI „looks off and not clean", fehlende Tabs, fehlende Desktop-Admin-
-Features auf Mobile abgleichen.
-
-### Offene Punkte
-
-- [ ] **KMP-F1 (Feature-Lücke, hoch — direkt aus dem Auftrag): Mobile Admin
-      fehlt die komplette `admin_edit_user`-Funktionalität des Desktops
-      (E-Mail / DisplayName / Passwort).** `AdminViewModel.kt` (230 Z.,
-      komplett gelesen) kennt nur `createUser`/`deleteUser`/`setQuota`/
-      `setEnabled`/`addToGroup`/`removeFromGroup`/`createGroup`; `AdminScreen.kt`
-      bietet dafür maximal Quota-/Gruppen-/Enable-Dropdowns. Der Desktop kann
-      über `admin_edit_user` (`commands.rs:1781`, Whitelist `ADMIN_EDIT_KEYS`:
-      displayname/email/password/quota/language/locale/enabled) Nutzerdaten
-      editieren (`AdminUserDetails.vue`, 211 Z.). Die Mobile-OCS-API bietet das
-      bereits an — `FlutCloudOcs.kt:76 updateUser(session, userId, key, value)` —
-      wird aber nur für `quota`/`enabled` genutzt (`setUserQuota` :86,
-      `setEnabled` in `AdminViewModel.kt:166`). Fix: `editUser()`-Methoden +
-      „Details"-Dialog (E-Mail/DisplayName/Passwort) im `AdminScreen`, damit
-      alle Desktop-Admin-Features auch auf Mobile vorhanden sind.
-- [ ] **KMP-F2 (Bug, mittel): Grid-Ansicht rendert keinerlei Aktionen —
-      `EntryGridItem` deklariert `menuOpen` + 6 Callbacks, nutzt sie aber nie.**
-      `FilesScreen.kt:806-899`: Die Parameter `onDownload`/`onShareFile`/
-      `onRename`/`onShareLink`/`onDelete`/`onJumpToPaired` und der State-
-      `menuOpen` (Zeile 821) werden akzeptiert und von der Aufrufstelle
-      (`FilesScreen.kt:428-442`) gefüttert, aber im Grid-Item nie gezeichnet —
-      ein `DropdownMenu` existiert nicht. Grid-Einträge sind dadurch nur
-      „öffnen" + Long-Press-Select; Download/Share/Löschen sind im Grid-Modus
-      unerreichbar (die Desktop-Grid-Hover-Buttons in `EntryList.vue:275-317`
-      haben hier kein Gegenstück). Fix: Ellipsis-`DropdownMenu` (wie
-      `EntryRow`, Zeile 745+) ins Grid-Item einbauen oder Callbacks/State
-      entfernen.
-- [ ] **KMP-F9 (Feature-Lücke, mittel — Desktop-Parität): Mobile fehlen
-      Copy/Move, QR-Code, QuickLook** — Desktop `webdav_copy`/`webdav_move`
-      (#411, `commands.rs:1383/1410`), `QrCode.vue` (#409) und `QuickLook.vue`
-      (#405) haben kein Mobile-Pendant: weder eine `copy`/`move`-Route in
-      `FlutCloudApi`/`FilesViewModel.kt` noch Clipboard-/QR-Zugriff auf den
-      Share-Link (`link_created`-Toast ist die einzige Rückgabe,
-      `FilesScreen.kt:283-288`) noch eine Vollbild-Preview. Reihenfolge nach
-      KMP-F1/F2 einplanen.
 
 ## Review 2026-08-28 (Lauf 24, Fokus Feature-Reihe #399–#428 — offener Befund)
 
@@ -254,7 +205,7 @@ Sortiert nach Umsetzungsaufwand (klein → groß).
       „meine Version / Server-Version / Beide behalten". Die Sync-Engine
       (`sync.rs`) erzeugt bereits Konflikt-Kopien; eine UI dafür fehlt. (#417 — Major)
 - [ ] **Virtuelle Dateisystem-Integration (VFS)** — On-Demand-Dateizugriff
-      via FUSE/WinFSP. Desktop-only (Plattform-Gründe, s. `kmp/README.md`).
+      via FUSE/WinFSP. Desktop-only (Plattform-Gründe).
       Big-Picture-Feature, erfordert native Integration pro Plattform. (#414 — Infeasible)
 - [ ] **WebSocket/SSE für Live-Updates** — Statt polling-basiertem Refresh
       (aktuell: `listen("accounts-changed")` / `listen("sync-status")`):
@@ -281,11 +232,8 @@ Sortiert nach Umsetzungsaufwand (klein → groß).
 
 ## Offen
 
-- [ ] Desktop-JVM: Token-Speicher härten — OS-Keyring-Anbindung statt
-      600er-Datei unter `$XDG_STATE_HOME/flutlink` (siehe
-      `FileKeyValueStorage`), Parität zum Tauri-Client (`keyring`).
 - [ ] CI security gate auf v1.2.0: 5.3/10 < min 7.0 — 7 AI-Befunde
-      (pre-existing: FileKeyValueStorage, update-nc.sh, commands.rs,
+      (pre-existing: update-nc.sh, commands.rs,
       guest.rs, ShareDialog.vue). Prüfen ob direktive actionable items
       oder zu low-priority für Hotfix.
 - [ ] L21-N4: `FileExplorer.vue` ist ein ~1130-Zeilen-Monolith —

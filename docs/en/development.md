@@ -10,12 +10,9 @@
 | Rust lint | `cargo clippy --all-targets --manifest-path src-tauri/Cargo.toml -- -D warnings` |
 | Rust tests | `cargo test --manifest-path src-tauri/Cargo.toml` |
 | Regenerate icons | `npm run tauri icon app-icon.png` |
-| Android APK (debug) | `cd kmp && ./gradlew :android-app:assembleDebug` |
-| KMP module (all targets) | `cd kmp && ./gradlew :shared:build` |
 
-**Verification before finishing any change:** run all four — `cargo fmt
+**Verification before finishing any change:** run all — `cargo fmt
 --check`, `cargo clippy -D warnings`, `cargo test`, `npm run build`.
-For changes in `kmp/` also run `cd kmp && ./gradlew :shared:build`.
 
 ## Conventions
 

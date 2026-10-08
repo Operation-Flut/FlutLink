@@ -8,11 +8,6 @@ Zwei-Wege-Sync, wobei der komplette HTTP-Stack (WebDAV + OCS) im Rust-Backend
 liegt. FlutLink verbindet sich ausschließlich mit dem FlutCloud-Server und
 lehnt Server ohne die FlutCloud-Nextcloud-App (`flutcloud-app/`) ab.
 
-> **Mobiler Client:** `kmp/` ist ein Kotlin-Multiplatform-Port des
-> Desktop-Clients (Android + iOS in einer Codebasis), generiert mit opencode
-> (siehe [`kmp/README.md`](../kmp/README.md)). Er spiegelt den
-> Desktop-Funktionsumfang und ist kein separates Produkt.
-
 Die Dokumentation wird in **zwei Sprachen** (Englisch und Deutsch) gepflegt.
 Jede Seite existiert in beiden Varianten und muss synchron bleiben.
 

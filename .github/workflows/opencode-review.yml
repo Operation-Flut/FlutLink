@@ -179,7 +179,7 @@ jobs:
             git fetch origin "pull/$number/head:pr-$number" 2>/dev/null || continue
             git checkout "pr-$number" 2>/dev/null || continue
 
-            REVIEW_PROMPT="Du bist ein Code-Reviewer für das FlutLink-Projekt (Tauri v2 Desktop-App + Android-Port).
+            REVIEW_PROMPT="Du bist ein Code-Reviewer für das FlutLink-Projekt (Tauri v2 Desktop-App).
 
             Lies den Code in diesem PR und bewerte ihn anhand dieser Kriterien:
             1. Ist der Code korrekt und frei von Bugs?

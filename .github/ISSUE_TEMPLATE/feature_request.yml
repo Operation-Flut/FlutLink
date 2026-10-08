@@ -14,8 +14,6 @@ body:
       description: "Which platform should this feature target?"
       options:
         - Desktop (Windows/macOS/Linux)
-        - Android
-        - Both (feature parity)
     validations:
       required: true
 

@@ -135,7 +135,7 @@ pub fn account_filter_info(state: State<'_, AppState>) -> AppResult<Option<Accou
 
 /// Project folder for the FlutCloud Nextcloud app, created during every
 /// registration. Lives in the admin's files under `/FlutLink` so feature
-/// requests and connection notes for the FlutLink desktop/mobile are
+/// requests and connection notes for the FlutLink desktop are
 /// collected in one shared place.
 const FLUTCLOUD_PROJECT_PATH: &str = "/FlutLink/FlutCloud";
 const FLUTCLOUD_README: &str = r#"# FlutCloud — Nextcloud App
@@ -143,10 +143,8 @@ const FLUTCLOUD_README: &str = r#"# FlutCloud — Nextcloud App
 Shared project space of the **FlutCloud Nextcloud app**.
 
 ## Purpose
-- Feature requests for the FlutCloud app and the FlutLink desktop and mobile
-  clients (Kotlin Multiplatform)
-- Connection notes between FlutCloud, FlutLink (desktop) and the FlutLink
-  mobile client (Android/iOS, `kmp/`)
+- Feature requests for the FlutCloud app and the FlutLink desktop client
+- Connection notes between FlutCloud and FlutLink (desktop)
 
 ## Feature requests
 Create one folder per request, e.g. `FR-001-share-links/`, containing a note
@@ -154,7 +152,6 @@ describing: what it should do, why (use case) and the expected behaviour.
 
 ## Connecting FlutLink
 - Desktop client: https://github.com/OseMine/FlutLink
-- Mobile client (Kotlin Multiplatform, `kmp/`): https://github.com/OseMine/FlutLink
 
 ---
 
@@ -163,10 +160,8 @@ describing: what it should do, why (use case) and the expected behaviour.
 Gemeinsamer Projektbereich der **FlutCloud-Nextcloud-App**.
 
 ## Zweck
-- Feature-Requests für die FlutCloud-App sowie den FlutLink-Desktop- und
-  Mobile-Client (Kotlin Multiplatform)
-- Verbindungsnotizen zwischen FlutCloud, FlutLink (Desktop) und dem
-  FlutLink-Mobile-Client (Android/iOS, `kmp/`)
+- Feature-Requests für die FlutCloud-App sowie den FlutLink-Desktop-Client
+- Verbindungsnotizen zwischen FlutCloud und FlutLink (Desktop)
 
 ## Feature-Requests
 Lege pro Request einen Ordner an, z. B. `FR-001-share-links/`, mit einer
@@ -175,7 +170,6 @@ erwartete Verhalten.
 
 ## FlutLink verbinden
 - Desktop-Client: https://github.com/OseMine/FlutLink
-- Mobile-Client (Kotlin Multiplatform, `kmp/`): https://github.com/OseMine/FlutLink
 "#;
 
 /// Input for creating a real account via the register page.

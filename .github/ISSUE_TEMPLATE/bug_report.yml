@@ -11,7 +11,7 @@ body:
     id: version
     attributes:
       label: FlutLink version
-      description: "Which version of FlutLink are you using? (Desktop: Settings > About · Android: Settings > About)"
+      description: "Which version of FlutLink are you using? (Desktop: Settings > About)"
       placeholder: "e.g. 1.0.0"
     validations:
       required: true
@@ -32,18 +32,8 @@ body:
         - Windows
         - macOS
         - Linux
-        - Android
     validations:
       required: true
-
-  - type: input
-    id: device
-    attributes:
-      label: Device (Android only)
-      description: "Manufacturer and model, e.g. Samsung Galaxy S24. Leave blank for desktop."
-      placeholder: "e.g. Samsung Galaxy S24"
-    validations:
-      required: false
 
   - type: dropdown
     id: installation
@@ -52,8 +42,6 @@ body:
       options:
         - Bundled app (from release)
         - "`npm run tauri dev`"
-        - Android APK (from GitHub release)
-        - Android APK (built locally)
     validations:
       required: true
 
@@ -93,7 +81,6 @@ body:
       description: |
         Paste relevant logs here.
         - Desktop (Rust stderr): run with `cargo tauri dev` and copy console output.
-        - Android: `adb logcat -d *:E | grep -i flutcloud`
       render: shell
 
   - type: textarea

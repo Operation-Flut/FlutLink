@@ -1,7 +1,7 @@
 <?php
 /**
  * FlutCloud admin settings — Einstellungen → Verwaltung → FlutCloud.
- * Web counterpart of the desktop/mobile admin UI: categories, share
+ * Web counterpart of the desktop admin UI: categories, share
  * assignment and subfolder locks. Mutations go through the existing OCS
  * admin endpoints; the page simply reloads afterwards.
  *

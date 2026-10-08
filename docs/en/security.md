@@ -50,10 +50,6 @@ FlutLink connects exclusively to the FlutCloud server and rejects all others:
   (`src-tauri/src/flutcloud.rs`) and exposed to the frontend via
   `get_flutcloud_url`. CI release builds bake the URL into binaries at compile
   time (`option_env!`) so installed apps work without a local `.env`.
-- The mobile client (`kmp/`) bakes the same URL into
-  `BuildConfig.FLUTCLOUD_URL` from the `FLUTCLOUD_URL` environment variable
-  (falling back to the `-PflutcloudUrl` Gradle property) and locks the login
-  server field when a URL is compiled in.
 - `account_add` / `register_user` reject other URLs
   (`AppError::NotFlutCloud`).
 - Before connecting, the OCS capabilities endpoint is probed for the

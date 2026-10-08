@@ -54,10 +54,6 @@ alle anderen ab:
   Frontend weitergegeben. CI-Release-Builds baken die URL zur Kompilierzeit
   in die Binaries ein (`option_env!`), sodass installierte Apps ohne lokale
   `.env` funktionieren.
-- Der mobile Client (`kmp/`) bakt dieselbe URL in
-  `BuildConfig.FLUTCLOUD_URL` aus der Umgebungsvariable `FLUTCLOUD_URL`
-  (Fallback: `-PflutcloudUrl` Gradle-Property) und sperrt das
-  Server-Eingabefeld im Login, wenn eine URL einkompiliert ist.
 - `account_add` / `register_user` lehnt andere URLs ab
   (`AppError::NotFlutCloud`).
 - Vor dem Verbinden wird der OCS-Capabilities-Endpoint auf die

@@ -10,13 +10,6 @@ Servern, die die FlutCloud-Nextcloud-App
 (keyring). Das Frontend ist Vue 3 + TypeScript + Tailwind v4 und läuft in
 einem Tauri WebView.
 
-**`kmp/` ist der mobile Client (Kotlin Multiplatform): Android, JVM und
-iOS-Targets in einer Codebasis.** Er ist ein Port des Desktop-Funktionsumfangs
-und kein separates Produkt. Bewusste Ausnahme: der Zwei-Wege-Sync ist
-Desktop-only (Plattform-Gründe, s. `kmp/README.md`). Der frühere separate
-Android-Port (`android/`, entfernt) und iOS-Port (`ios/`, Swift + SwiftUI,
-entfernt) sind in `kmp/` aufgegangen. Details in `kmp/README.md`.
-
 ## Struktur
 
 - `src/` — Vue 3 Frontend (Komponenten inkl. `GuestBrowser.vue` für
@@ -46,9 +39,6 @@ entfernt) sind in `kmp/` aufgegangen. Details in `kmp/README.md`.
   - `nextcloud/webdav.rs` — PROPFIND-Parser, `Impersonate-User`-Support,
     Transfer-Helper (`put_file`/`get_file`/`delete`/`make_collection`)
   - `nextcloud/ocs.rs` — OCS Provisioning API (User-Liste, Details, Quota, Shares)
-- `kmp/` — mobiler Client (Kotlin Multiplatform): Android-APK, JVM und
-  iOS-Framework in einer Codebasis; `kmp/iosApp/` ist die Xcode-Hülle für
-  den iOS-Build; `kmp/README.md` beschreibt Struktur, Build und CI
 - `flutcloud-app/` — Nextcloud-Server-App (PHP) für die Nicht-Standard-Funktionen
   des FlutCloud-Servers (Capability, `resources`/`parts`-Virtuelle-Links,
   Projektordner). FlutLink verbindet sich nur mit Servern, die diese App
@@ -58,7 +48,7 @@ entfernt) sind in `kmp/` aufgegangen. Details in `kmp/README.md`.
   via `curl ... | iex` bzw. `curl ... | bash` nutzbar),
   `install-nextcloud.sh` (Nextcloud-App auf dem Server),
   `update-nc-dev.sh` / `update-nc.sh` (Server-App-Update von `main` bzw. vom
-  neuesten Release), `update-altstore-sources.mjs` (AltStore-Quellen)
+  neuesten Release)
 - `.github/workflows/` — CI (build/lint/checks) + automatisierte Reviews
 - `.opencode/` — opencode-Konfiguration (Agent `reviewer`, Commands)
 - `docs/` — zweisprachige Architektur-Dokumentation (`docs/en/` + `docs/de/`,
@@ -73,10 +63,6 @@ entfernt) sind in `kmp/` aufgegangen. Details in `kmp/README.md`.
 - `cargo clippy --all-targets --manifest-path src-tauri/Cargo.toml -- -D warnings`
 - `cargo test --manifest-path src-tauri/Cargo.toml` (Unit-Tests in
   `nextcloud/`-Modulen)
-- `cd kmp && ./gradlew :android-app:assembleDebug` — Android-APK bauen
-  (JDK 17; CI siehe `.github/workflows/kmp.yml`)
-- `cd kmp && ./gradlew :shared:build` — KMP-Modul bauen (Android + JVM +
-  Unit-Tests; iOS-Targets nur auf macOS/Xcode-Hosts kompilierbar)
 
 ## Konventionen
 
@@ -100,5 +86,4 @@ entfernt) sind in `kmp/` aufgegangen. Details in `kmp/README.md`.
 Vor dem Abschluss einer Änderung immer ausführen:
 `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`,
 `cargo test` (jeweils mit `--manifest-path src-tauri/Cargo.toml`) und
-`npm run build`. Bei Änderungen an `kmp/` zusätzlich
-`cd kmp && ./gradlew :shared:build`.
+`npm run build`.

@@ -427,7 +427,6 @@ fn handle_cli(app: &tauri::AppHandle) {
     );
 }
 
-#[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let quit_flag = Arc::new(AtomicBool::new(false));
     let quit_flag_close = quit_flag.clone();

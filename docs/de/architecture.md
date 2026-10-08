@@ -68,17 +68,6 @@ flutcloud-app/                    # FlutCloud-Nextcloud-Server-App (PHP)
 ├── appinfo/                      # info.xml, OCS-Routen (api/v1/*)
 ├── lib/                          # Capabilities, ApiController, LinkService, GuestApi
 └── composer.json                 # OCA\FlutCloud-Autoloading
-
-kmp/                              # FlutLink-Mobiler Client (Kotlin Multiplatform)
-│                                 # Port der Desktop-App nach Kotlin, von opencode generiert
-├── shared/                       # KMP-Modul: Android-App + JVM + iOS-Targets
-│   └── src/
-│       ├── commonMain/           # Plattformagnostischer Kern (AuthSession, DTOs, JsonUtil)
-│       ├── androidMain/          # Vollständige Android-App: Compose-UI (Login, Dateien, Admin,
-│       │                         # Einstellungen), FlutCloudApi/WebDavApi, Stores, manifest/res
-│       ├── androidUnitTest/      # JVM-Unit-Tests
-│       └── iosMain/              # iOS-Einstiegspunkt (MainViewController → Compose-UI)
-└── iosApp/                       # Xcode-Hülle für den iOS-Build (unsigniertes IPA in CI)
 ```
 
 ## FlutCloud-only

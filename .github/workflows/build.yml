@@ -119,42 +119,9 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-  android:
-    name: Mobile artifacts (Android APK, unsigned debug)
-    if: github.event_name == 'push'
-    needs: [frontend, rust]
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          persist-credentials: false
-
-      - name: Build unsigned debug APK (from KMP project)
-        uses: ./.github/actions/kmp-android-build
-        with:
-          signed: "false"
-          artifact-name: flutlink-android-debug
-
-  ios:
-    name: Mobile artifacts (iOS IPA, unsigned)
-    if: github.event_name == 'push'
-    needs: [frontend, rust]
-    runs-on: macos-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          persist-credentials: false
-
-      - name: Build unsigned iOS IPA (from KMP project)
-        uses: ./.github/actions/kmp-ios-build
-        with:
-          artifact-name: flutlink-ios-unsigned
-
   complete:
     name: CI complete
-    needs: [frontend, rust, artifacts, android, ios]
+    needs: [frontend, rust, artifacts]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -164,12 +131,10 @@ jobs:
           FRONTEND: ${{ needs.frontend.result }}
           RUST: ${{ needs.rust.result }}
           ARTIFACTS: ${{ needs.artifacts.result }}
-          ANDROID: ${{ needs.android.result }}
-          IOS: ${{ needs.ios.result }}
         run: |
-          echo "Job results: frontend=$FRONTEND rust=$RUST artifacts=$ARTIFACTS android=$ANDROID ios=$IOS"
+          echo "Job results: frontend=$FRONTEND rust=$RUST artifacts=$ARTIFACTS"
           fail=0
-          for result in "$FRONTEND" "$RUST" "$ARTIFACTS" "$ANDROID" "$IOS"; do
+          for result in "$FRONTEND" "$RUST" "$ARTIFACTS"; do
             case "$result" in
               success|skipped) ;; # skipped = push-gated jobs on PR runs
               *) fail=1 ;;
@@ -179,4 +144,4 @@ jobs:
             echo "::error::At least one job failed - see results above"
             exit 1
           fi
-          echo "All checks passed (frontend + rust + artifacts + mobile)"
+          echo "All checks passed (frontend + rust + artifacts)"

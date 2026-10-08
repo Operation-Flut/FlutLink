@@ -41,8 +41,6 @@ return [
         ['name' => 'PublicShares#locksFor', 'url' => '/api/v1/public/shares/{token}/locks', 'verb' => 'GET'],
     ],
     'routes' => [
-        ['name' => 'Ios#index', 'url' => '/ios', 'verb' => 'GET'],
-        ['name' => 'Ios#source', 'url' => '/ios/{source}', 'verb' => 'GET'],
         // Guest web routes for complete public shares. The prefixless
         // catch-all must stay last so concrete app routes keep precedence;
         // it 404s everything that is not a configured prefixless category.

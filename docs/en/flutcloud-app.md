@@ -33,7 +33,6 @@ only needed for the `OCA\FlutCloud\` namespace (PSR-4 → `lib/`).
 | Writable parts | Write-enabled `parts/` folders, managed via the parts API |
 | Project folder | `/FlutLink/FlutCloud` in the admin home with a bilingual README |
 | Complete public shares | Anonymous, strictly read-only guest access to folders shared publicly as a whole, with categories and recursive subfolder locks |
-| iOS AltStore Classic source | `GET /apps/flutcloud/ios/classic` — always redirects to the source JSON of the latest FlutLink GitHub release |
 
 ## Installation
 
@@ -160,24 +159,6 @@ Contract tests (no live server required):
 php flutcloud-app/tests/capability-contract.php
 php flutcloud-app/tests/public-share-contract.php
 ```
-
-## iOS / AltStore Classic source
-
-Public endpoint (no authentication) that hands out the latest FlutLink
-AltStore Classic source JSON for iOS sideloading — add it in AltStore under
-*Sources → +*:
-
-| Method | Path | Description |
-| --- | --- | --- |
-| `GET` | `/apps/flutcloud/ios` | Lists sources with their current target URLs |
-| `GET` | `/apps/flutcloud/ios/classic` | 302 to the latest AltStore **Classic** source JSON |
-
-The target is resolved on demand: the app queries the GitHub releases API
-(cached for 10 minutes) and redirects to the `classic.json`
-asset of the latest release; if GitHub is unreachable or rate-limited it
-falls back to the copy committed to `main`. To also serve it at the
-server root (`/ios/classic`), add one of the web-server rewrite
-snippets from the [app README](../../flutcloud-app/README.md#ios--altstore-classic-source).
 
 ## Troubleshooting
 

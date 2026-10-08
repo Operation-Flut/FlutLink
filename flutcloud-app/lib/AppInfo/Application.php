@@ -26,7 +26,6 @@ class Application extends App implements IBootstrap
     public const FEATURES = [
         'virtual-links',
         'project-folder',
-        'altstore-sources',
         'complete-public-shares',
     ];
 

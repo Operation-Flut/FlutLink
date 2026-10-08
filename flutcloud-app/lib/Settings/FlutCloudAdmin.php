@@ -10,7 +10,7 @@ use OCP\Settings\ISettings;
 
 /**
  * Admin settings form: public-share categories, share assignment and
- * subfolder locks — the web counterpart of the desktop/mobile admin UI.
+ * subfolder locks — the web counterpart of the desktop admin UI.
  * All mutations go through the existing OCS admin endpoints.
  */
 class FlutCloudAdmin implements ISettings

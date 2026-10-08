@@ -32,7 +32,6 @@ wird nur für den `OCA\FlutCloud\`-Namespace gebraucht (PSR-4 → `lib/`).
 | Schreibbare Parts | Beschreibbare `parts/`-Ordner, verwaltet über die Parts-API |
 | Projektordner | `/FlutLink/FlutCloud` im Admin-Home mit zweisprachiger README |
 | Vollständige öffentliche Freigaben | Anonymer, streng schreibgeschützter Gastzugriff auf Ordner mit passwortfreier Linkfreigabe, mit Kategorien und rekursiven Unterordner-Locks |
-| iOS-AltStore-Classic-Quelle | `GET /apps/flutcloud/ios/classic` — leitet immer zur Quell-JSON des neuesten FlutLink-GitHub-Releases weiter |
 
 ## Installation
 
@@ -163,25 +162,6 @@ Vertrags-Tests (kein laufender Server nötig):
 php flutcloud-app/tests/capability-contract.php
 php flutcloud-app/tests/public-share-contract.php
 ```
-
-## iOS-/AltStore-Classic-Quelle
-
-Öffentlicher Endpoint (ohne Authentifizierung), der die neueste
-FlutLink-AltStore-Classic-Quell-JSON fürs iOS-Sideloading ausliefert — in
-AltStore direkt unter *Quellen → +* hinzufügen:
-
-| Methode | Pfad | Beschreibung |
-| --- | --- | --- |
-| `GET` | `/apps/flutcloud/ios` | Listet die Quellen mit ihren aktuellen Ziel-URLs |
-| `GET` | `/apps/flutcloud/ios/classic` | 302 zur neuesten AltStore-**Classic**-Quell-JSON |
-
-Das Ziel wird bei Bedarf aufgelöst: Die App fragt die GitHub-Releases-API
-ab (10 Minuten gecacht) und leitet zum `classic.json`-Asset des
-neuesten Releases weiter; ist GitHub nicht erreichbar oder drosselt es den
-Server, greift sie auf die in `main` eingecheckte Kopie zurück. Um sie auch
-an der Serverwurzel (`/ios/classic`) auszuliefern, eines der
-Webserver-Rewrite-Snippets aus dem
-[App-README](../../flutcloud-app/README.md#ios-altstore-classic-quelle) ergänzen.
 
 ## Fehlerbehebung
 

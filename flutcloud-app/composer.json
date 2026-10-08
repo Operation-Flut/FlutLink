@@ -21,7 +21,6 @@
         "check": [
             "@php -l lib/AppInfo/Application.php",
             "@php -l lib/Capabilities.php",
-            "@php -l lib/Controller/IosController.php",
             "@php -l lib/Controller/LinksController.php",
             "@php -l lib/Controller/OcsControllerBase.php",
             "@php -l lib/Controller/PartsController.php",
@@ -29,7 +28,6 @@
             "@php -l lib/Controller/ProjectFolderController.php",
             "@php -l lib/Exception/InvalidNameException.php",
             "@php -l lib/Exception/NotAFolderException.php",
-            "@php -l lib/Service/AltStoreSourceService.php",
             "@php -l lib/Service/LinkService.php",
             "@php -l lib/Service/NameValidator.php",
             "@php -l appinfo/routes.php"

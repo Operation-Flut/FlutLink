@@ -18,8 +18,6 @@
           folders shared publicly as a whole, bundled at one place with
           categories (/public/&lt;category&gt;, prefixless per admin config) and
           recursive subfolder locks
-        - iOS AltStore source: /apps/flutcloud/ios/classic always redirects to
-          the source JSON of the latest FlutLink GitHub release
 
         FlutLink connects exclusively to servers that run this app.
 

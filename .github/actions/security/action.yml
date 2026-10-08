@@ -192,7 +192,7 @@ runs:
           echo "- TLS-/Auth-Probleme bei WebDAV/OCS-Nutzung (src-tauri/nextcloud/)"
           echo "- XSS-Vektoren im WebView-Frontend (src/)"
           echo "- Unsichere PHP-Muster (flutcloud-app/): SQL-Injection, fehlende Escapes"
-          echo "- Unsichere Konfiguration im Kotlin-Modul (kmp/) und in Skripten (scripts/)"
+          echo "- Unsichere Konfiguration in Skripten (scripts/)"
           echo ""
           echo "Geänderte Dateien:"
           echo "$FILES"
