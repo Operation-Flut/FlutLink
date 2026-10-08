@@ -12,6 +12,8 @@ import {
   type UpdateStatus,
 } from "../lib/ipc";
 import { translate, updateStatusText as localizedUpdateStatus } from "../lib/i18n";
+import { marked } from "marked";
+import DOMPurify from "dompurify";
 import { registerEscapeCloser } from "../lib/escape";
 
 const props = defineProps<{
@@ -83,20 +85,9 @@ function openReleasePage() {
 
 const notesHtml = computed(() => {
   if (!props.info?.notes) return null;
-  // GitHub releases return markdown; render as simple line breaks for now
-  return props.info.notes
-    .replace(/\r\n/g, "\n")
-    .split("\n")
-    .map((line) => {
-      if (line.startsWith("### ")) return `<p class="font-semibold mt-2 mb-1">${line.slice(4)}</p>`;
-      if (line.startsWith("## ")) return `<p class="font-bold mt-3 mb-1 text-sm">${line.slice(3)}</p>`;
-      if (line.startsWith("# ")) return `<p class="font-bold text-base mt-3 mb-1">${line.slice(2)}</p>`;
-      if (line.startsWith("- ")) return `<li class="ml-4 list-disc">${line.slice(2)}</li>`;
-      if (line.match(/^\d+\.\s/)) return `<li class="ml-4 list-decimal">${line.replace(/^\d+\.\s/, "")}</li>`;
-      if (line.trim() === "") return "<br />";
-      return `<p>${line}</p>`;
-    })
-    .join("");
+  // Render markdown with `marked` and sanitize with DOMPurify to prevent XSS
+  const rawHtml = marked.parse(props.info.notes, { async: false });
+  return DOMPurify.sanitize(rawHtml as string);
 });
 
 // L19-N1: Escape closes the modal while it is open.
@@ -114,6 +105,84 @@ watch(
 );
 onUnmounted(() => removeEscapeCloser?.());
 </script>
+
+<style scoped>
+/* Markdown content styling for release notes */
+.update-notes :deep(h1),
+.update-notes :deep(h2),
+.update-notes :deep(h3),
+.update-notes :deep(h4) {
+  font-weight: 600;
+  margin-top: 0.75rem;
+  margin-bottom: 0.375rem;
+  line-height: 1.3;
+}
+.update-notes :deep(h1) { font-size: 1rem; }
+.update-notes :deep(h2) { font-size: 0.875rem; }
+.update-notes :deep(h3) { font-size: 0.8125rem; }
+.update-notes :deep(h4) { font-size: 0.75rem; }
+
+.update-notes :deep(p) {
+  margin-top: 0.375rem;
+  margin-bottom: 0.375rem;
+}
+
+.update-notes :deep(ul),
+.update-notes :deep(ol) {
+  padding-left: 1.25rem;
+  margin-top: 0.375rem;
+  margin-bottom: 0.375rem;
+}
+.update-notes :deep(li) {
+  margin-bottom: 0.1875rem;
+}
+
+.update-notes :deep(strong) { font-weight: 600; }
+.update-notes :deep(em) { font-style: italic; }
+
+.update-notes :deep(code) {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.75rem;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+}
+.update-notes :deep(pre) {
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  overflow-x: auto;
+  font-size: 0.7rem;
+  line-height: 1.5;
+}
+.update-notes :deep(pre code) {
+  background: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+.update-notes :deep(blockquote) {
+  border-left: 2px solid color-mix(in srgb, currentColor 30%, transparent);
+  padding-left: 0.75rem;
+  margin: 0.5rem 0;
+  color: color-mix(in srgb, currentColor 70%, transparent);
+  font-style: italic;
+}
+
+.update-notes :deep(a) {
+  color: var(--color-primary, #3b82f6);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.update-notes :deep(a:hover) { opacity: 0.8; }
+
+.update-notes :deep(hr) {
+  border: none;
+  border-top: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+  margin: 0.75rem 0;
+}
+</style>
 
 <template>
   <Teleport to="body">
@@ -151,7 +220,7 @@ onUnmounted(() => removeEscapeCloser?.());
 
             <div
               v-if="notesHtml"
-              class="mb-4 rounded-md border border-line bg-card/50 p-3 text-xs leading-relaxed text-fg/80"
+              class="mb-4 rounded-md border border-line bg-card/50 p-3 text-xs leading-relaxed text-fg/80 update-notes"
             >
               <p class="mb-2 text-[11px] font-medium uppercase tracking-wide text-muted">
                 {{ t("updateReleaseNotes") }}
