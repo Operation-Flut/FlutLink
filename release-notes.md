@@ -1,30 +1,27 @@
-# FlutLink v1.3.1
+# FlutLink v1.5.0
 
-Patch-Release für Desktop (Tauri) und mobilen Client (KMP).
+Major-Release: **Entfernung des mobilen KMP-Clients** und **Autostart-Verhaltens-Fix**.
 
 ## Neu
 
-- KMP: Dateilisten-Ansichtsmodus (Liste/Raster) wird gespeichert und über Tabs sowie App-Neustarts hinweg beibehalten.
-- KMP: Admin-Tab wird für Nicht-Administratoren als gesperrt angezeigt (Parität zum Desktop).
-- KMP: Lokalisierung für Dateilisten-Ansichtsmodus und Breadcrumb-Wurzellabel.
-- Release-Workflow: Vorab-Prüfung, ob die Update-Signatur-Secrets gesetzt sind, mit verständlicher Fehlermeldung statt kryptischem Asset-Fehler beim Publish.
+- **Desktop-only**: Der mobile Kotlin-Multiplatform-Client (`kmp/`) wurde vollständig entfernt (Issue #523). FlutLink ist nun ein reiner Desktop-Client (Tauri v2).
+- **FlutCloud Server-App 1.3.0**: Entfernt iOS/AltStore-Endpunkte (`IosController.php`, `AltStoreSourceService.php`), da der mobile Client entfällt.
 
 ## Behoben
 
-- Beschädigte `settings.json` wird nun in Quarantäne gestellt statt beim nächsten Speichern stillschweigend überschrieben.
-- Headless-Modus (`--download`/`--list`) validiert jetzt den Remote-Pfad.
-- QuickLook: Vor/Zurück ist an den Listenrändern deaktiviert; veraltete Thumbnails werden ignoriert.
-- Thumbnail-Daten-URLs sind auf `image/*` (MIME-Whitelist) beschränkt – verhindert, dass serverseitig manipulierte Nicht-Bild-Inhalte ins Frontend gelangen.
-- Identische Toasts werden dedupliziert.
-- Updater: Der „installing“-Status wird vor der Installation gesendet (wurde unter Windows verschluckt); auf macOS/Linux startet sich die App nach dem Update selbst neu.
+- **Autostart-Verhalten** (Issue #494): Die App startet nun **nur noch beim OS-Login minimiert im Tray**; jeder manuelle Start öffnet das Fenster normal. Zuvor wurde das Fenster bei aktivierter Autostart-Einstellung **immer** versteckt.
+- **Sicherheitslücken** geschlossen:
+  - `source-map-js` 1.2.2 (CVE-2026-93749, DoS via malformed source maps)
+  - `rustls` 0.23.43 (RUSTSEC-2026-0285 / GHSA-2mjx-qc3c-rqvc, TLS 1.3 handshake flaw)
 
 ## Verbessert
 
-- `settings.json` wird nur noch bei tatsächlichen Änderungen geschrieben; `share_seen` wird beim ersten Listing gesetzt (keine Benachrichtigungs-Flut bei Neuinstallationen); O(n)-Pruning.
-- `history::clear` ist gegen `record_open` abgesichert und entfernt verwaiste Temp-Dateien des atomaren Schreibens.
-- Release-Workflow: Fehler bei der KI-gestützten Release-Notes-Erstellung blockieren den Release nicht mehr (Fallback-Text wird genutzt).
+- **Tauri-Plugin-Abgleich**: `tauri-plugin-dialog` auf 2.8.1 aktualisiert (Version-Mismatch mit NPM-Paket behoben).
+- **Abhängigkeiten**: Diverse Rust- und npm-Abhängigkeiten via Dependabot aktualisiert.
+- **Dokumentation**: CLI-Flags (`--autostart`) und Autostart-Verhalten in `docs/*/tray-and-cli.md` und `features.md` dokumentiert (EN/DE).
 
 ## Hinweise
 
 - Die CI-Installer sind derzeit nicht signiert. macOS Gatekeeper und Windows SmartScreen können Warnungen anzeigen.
-- Der Zwei-Wege-Sync ist Desktop-only (nicht im mobilen Client verfügbar).
+- Der Zwei-Wege-Sync ist Desktop-only.
+- Die Nextcloud-Server-App (`flutcloud-app.zip`, v1.3.0) muss auf dem Server aktualisiert werden (entfernt AltStore/iOS-Endpunkte).
