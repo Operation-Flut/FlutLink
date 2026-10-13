@@ -63,7 +63,7 @@ jobs:
 
       - name: Run OpenCode review
         if: ${{ steps.model.outputs.model != '' }}
-        uses: anomalyco/opencode/github@0fd7e2829449b052abf0078666669302923d77af # v2.0.23
+        uses: anomalyco/opencode/github@9b4ec5714d481559990db0a816d5dec19541a814 # v2.0.26
         id: review
         env:
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
