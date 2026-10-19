@@ -17,7 +17,7 @@
     "@types/dompurify": "^3.0.5",
     "dompurify": "^3.4.16",
     "getos": "^3.2.1",
-    "marked": "^18.1.0",
+    "marked": "^18.1.1",
     "pinia": "^4.0.3",
     "qrcode": "^1.5.4",
     "vue": "^3.5.43"
