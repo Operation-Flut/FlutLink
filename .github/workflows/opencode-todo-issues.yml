@@ -63,7 +63,7 @@ jobs:
 
       - name: Run opencode to create issues from todo.md
         if: ${{ steps.model.outputs.model != '' }}
-        uses: anomalyco/opencode/github@0fd7e2829449b052abf0078666669302923d77af # v2.0.23
+        uses: anomalyco/opencode/github@68bc26b7da1990ce10ffecfbc1e09eb13aa5d824 # v2.1.4
         env:
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
           PUTER_AUTH_TOKEN: ${{ secrets.PUTER_AUTH_TOKEN }}
